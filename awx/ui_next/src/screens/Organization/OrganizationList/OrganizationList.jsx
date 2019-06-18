@@ -38,6 +38,7 @@ class OrganizationsList extends Component {
       selected: [],
       itemCount: 0,
       actions: null,
+      deleted: false,
     };
 
     this.handleSelectAll = this.handleSelectAll.bind(this);
@@ -55,6 +56,12 @@ class OrganizationsList extends Component {
     const { location } = this.props;
     if (location !== prevProps.location) {
       this.loadOrganizations();
+    }
+    const { selected, deleted, itemCount } = this.state;
+
+    if (selected.length > 0 && deleted) {
+      this.state.itemCount = itemCount - selected.length;
+      this.state.deleted = false;
     }
   }
 
@@ -81,6 +88,7 @@ class OrganizationsList extends Component {
 
   async handleOrgDelete () {
     const { selected } = this.state;
+    this.setState({ deleted: true });
 
     this.setState({ hasContentLoading: true });
     try {
