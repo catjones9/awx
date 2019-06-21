@@ -80,18 +80,12 @@ class OrganizationsList extends Component {
   }
 
   async handleOrgDelete () {
-    const { selected } = this.state;
-    await this.loadOrganizations;
+    const { selected, itemCount } = this.state;
 
     this.setState({ hasContentLoading: true });
     // this.setState({ contentLoading: true, deletionError: false });
 
     try {
-      if (selected.length > 0) {
-        this.setState((prevState) => ({
-          itemCount: prevState.itemCount - prevState.selected.length
-        }));
-      }
       await Promise.all(selected.map((org) => OrganizationsAPI.destroy(org.id)));
     } catch (err) {
       this.setState({ deletionError: err });
