@@ -51,7 +51,6 @@ class TemplatesList extends Component {
       itemCount: 0,
       isOpen: false,
       isAddOpen: false,
-      nothing: 0
     };
     this.loadTemplates = this.loadTemplates.bind(this);
     this.handleSelectAll = this.handleSelectAll.bind(this);
@@ -81,7 +80,7 @@ class TemplatesList extends Component {
   }
 
   nothing () {
-    console.warn(this.state.nothing);
+    console.log('clicked')
   }
 
   handleAddSelect () {
@@ -91,9 +90,8 @@ class TemplatesList extends Component {
   }
 
   handleAddToggle () {
-    //const { isAddOpen } = this.state;
-    console.log("like, zoinks Scoob")
-    //this.setState({ isAddOpen: isAddOpen });
+    const { isAddOpen } = this.state;
+    this.setState({ isAddOpen: !isAddOpen });
   }
 
   handleSelectAll (isSelected) {
@@ -112,11 +110,15 @@ class TemplatesList extends Component {
   }
 
   onJobClick () {
-    console.log('job')
+    JobTemplatesAPI.launch();
+    // window.location.replace('/#/home');
+    console.log('add job template')
   }
 
   onWorkflowClick () {
-    console.log('workflow')
+    WorkflowJobTemplatesAPI.launch();
+    window.location.replace('/#/home');
+    this.setState({href: '/#/home'});
   }
 
   async handleTemplateDelete () {
@@ -210,10 +212,9 @@ class TemplatesList extends Component {
                     key="add"
                     isOpen={isAddOpen}
                     position={DropdownPosition.right}
-                    onSelect={this.handleAddSelect}
                     toggle={(
                       <DropdownToggle onToggle={this.handleAddToggle} iconComponent={null}>
-                        <ToolbarAddButton onClick={this.nothing}/>
+                        <ToolbarAddButton onClick={this.nothing}/> 
                       </DropdownToggle>
                     )}
                     dropdownItems={[
@@ -222,13 +223,16 @@ class TemplatesList extends Component {
                         component="button"
                         // onClick={onJobClick}>
                         onClick={this.onJobClick}>
+                        {/* to={this.onJobClick}> */}
                           {i18n._(t`Job Template`)}
                       </DropdownItem>,
                       <DropdownItem 
                         key="workflow"
                         component="button"
                         // onClick={onWorkflowClick}>
-                        onClick={this.onWorkflowClick}>
+                        // to={`/templates/${match.params.templateType}/${match.params.id}/add`}
+                        onClick={this.onWorkflowClick}
+                        >
                         {i18n._(t`Workflow Template`)}
                       </DropdownItem>
                       ]}
