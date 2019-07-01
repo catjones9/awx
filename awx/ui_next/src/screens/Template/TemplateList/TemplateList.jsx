@@ -49,6 +49,7 @@ class TemplatesList extends Component {
       selected: [],
       templates: [],
       itemCount: 0,
+      isOpen: false,
       isAddOpen: false,
       nothing: 0
     };
@@ -60,7 +61,8 @@ class TemplatesList extends Component {
     this.handleAddSelect = this.handleAddSelect.bind(this);
     this.handleAddToggle = this.handleAddToggle.bind(this);
     this.nothing = this.nothing.bind(this);
-
+    this.onJobClick = this.onJobClick.bind(this);
+    this.onWorkflowClick = this.onWorkflowClick.bind(this);
   }
 
   componentDidMount() {
@@ -70,13 +72,7 @@ class TemplatesList extends Component {
   componentDidUpdate(prevProps) {
     const { location } = this.props;
     if (location !== prevProps.location) {
-      this.loadOrganizations();
-    }
-    const { selected, deleted, itemCount } = this.state;
-
-    if (selected.length > 0 && deleted) {
-      this.state.itemCount = itemCount - selected.length;
-      this.state.deleted = false;
+      this.loadTemplates();
     }
   }
 
@@ -84,15 +80,25 @@ class TemplatesList extends Component {
     this.setState({ deletionError: null });
   }
 
+<<<<<<< HEAD
 
   handleAddToggle () {
+=======
+  nothing () {
+    console.warn(this.state.nothing);
+  }
+
+  handleAddSelect () {
+>>>>>>> WIP
     const { isAddOpen } = this.state;
 
     this.setState({ isAddOpen: !isAddOpen });
   }
 
-  handleAddSelect (isOpen) {
-    this.setState({ isAddOpen: isOpen });
+  handleAddToggle () {
+    //const { isAddOpen } = this.state;
+    console.log("like, zoinks Scoob")
+    //this.setState({ isAddOpen: isAddOpen });
   }
 
   handleSelectAll (isSelected) {
@@ -110,7 +116,19 @@ class TemplatesList extends Component {
     }
   }
 
+<<<<<<< HEAD
   async handleTemplateDelete() {
+=======
+  onJobClick () {
+    console.log('job')
+  }
+
+  onWorkflowClick () {
+    console.log('workflow')
+  }
+
+  async handleTemplateDelete () {
+>>>>>>> WIP
     const { selected } = this.state;
 
     this.setState({ hasContentLoading: true });
@@ -162,12 +180,11 @@ class TemplatesList extends Component {
       templates,
       itemCount,
       selected,
-      isAddOpen,
-      isOpen
+      isAddOpen
     } = this.state;
     const {
       match,
-      i18n
+      i18n,
     } = this.props;
 
     const isAllSelected = selected.length === templates.length;
@@ -213,19 +230,28 @@ class TemplatesList extends Component {
                   />,
                   <Dropdown
                     isPlain
+                    key="add"
                     isOpen={isAddOpen}
                     position={DropdownPosition.right}
                     onSelect={this.handleAddSelect}
                     toggle={(
-                      <DropdownToggle iconComponent={null} onToggle={this.handleAddToggle}>
-                        <ToolbarAddButton key="add" onToggle={this.handleAddToggle} onClick={this.nothing}/>
+                      <DropdownToggle onToggle={this.handleAddToggle} iconComponent={null}>
+                        <ToolbarAddButton onClick={this.nothing}/>
                       </DropdownToggle>
                     )}
                     dropdownItems={[
-                      <DropdownItem key="job">
-                        {i18n._(t`Job Template`)}
+                      <DropdownItem 
+                        key="job" 
+                        component="button"
+                        // onClick={onJobClick}>
+                        onClick={this.onJobClick}>
+                          {i18n._(t`Job Template`)}
                       </DropdownItem>,
-                      <DropdownItem key="workflow">
+                      <DropdownItem 
+                        key="workflow"
+                        component="button"
+                        // onClick={onWorkflowClick}>
+                        onClick={this.onWorkflowClick}>
                         {i18n._(t`Workflow Template`)}
                       </DropdownItem>
                       ]}
