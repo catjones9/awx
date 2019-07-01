@@ -8,9 +8,11 @@ import {
   PageSectionVariants,
   Dropdown,
   DropdownItem,
+  DropdownToggle,
   DropdownPosition,
 } from '@patternfly/react-core';
 
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   JobTemplatesAPI,
   UnifiedJobTemplatesAPI,
