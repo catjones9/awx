@@ -2,8 +2,17 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { withI18n } from '@lingui/react';
 import { t } from '@lingui/macro';
-import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
+import {
+  Card,
+  PageSection,
+  PageSectionVariants,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownPosition,
+} from '@patternfly/react-core';
 
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   JobTemplatesAPI,
   UnifiedJobTemplatesAPI,
@@ -14,6 +23,7 @@ import DatalistToolbar from '@components/DataListToolbar';
 import ErrorDetail from '@components/ErrorDetail';
 import PaginatedDataList, {
   ToolbarDeleteButton,
+  ToolbarAddButton
 } from '@components/PaginatedDataList';
 import { getQSConfig, parseNamespacedQueryString } from '@util/qs';
 
@@ -39,12 +49,18 @@ class TemplatesList extends Component {
       selected: [],
       templates: [],
       itemCount: 0,
+      isAddOpen: false,
+      nothing: 0
     };
     this.loadTemplates = this.loadTemplates.bind(this);
     this.handleSelectAll = this.handleSelectAll.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleTemplateDelete = this.handleTemplateDelete.bind(this);
     this.handleDeleteErrorClose = this.handleDeleteErrorClose.bind(this);
+    this.handleAddSelect = this.handleAddSelect.bind(this);
+    this.handleAddToggle = this.handleAddToggle.bind(this);
+    this.nothing = this.nothing.bind(this);
+
   }
 
   componentDidMount() {
@@ -54,7 +70,13 @@ class TemplatesList extends Component {
   componentDidUpdate(prevProps) {
     const { location } = this.props;
     if (location !== prevProps.location) {
-      this.loadTemplates();
+      this.loadOrganizations();
+    }
+    const { selected, deleted, itemCount } = this.state;
+
+    if (selected.length > 0 && deleted) {
+      this.state.itemCount = itemCount - selected.length;
+      this.state.deleted = false;
     }
   }
 
@@ -62,7 +84,18 @@ class TemplatesList extends Component {
     this.setState({ deletionError: null });
   }
 
-  handleSelectAll(isSelected) {
+
+  handleAddToggle () {
+    const { isAddOpen } = this.state;
+
+    this.setState({ isAddOpen: !isAddOpen });
+  }
+
+  handleAddSelect (isOpen) {
+    this.setState({ isAddOpen: isOpen });
+  }
+
+  handleSelectAll (isSelected) {
     const { templates } = this.state;
     const selected = isSelected ? [...templates] : [];
     this.setState({ selected });
@@ -129,8 +162,14 @@ class TemplatesList extends Component {
       templates,
       itemCount,
       selected,
+      isAddOpen,
+      isOpen
     } = this.state;
-    const { match, i18n } = this.props;
+    const {
+      match,
+      i18n
+    } = this.props;
+
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
@@ -172,6 +211,26 @@ class TemplatesList extends Component {
                     itemsToDelete={selected}
                     itemName={i18n._(t`Template`)}
                   />,
+                  <Dropdown
+                    isPlain
+                    isOpen={isAddOpen}
+                    position={DropdownPosition.right}
+                    onSelect={this.handleAddSelect}
+                    toggle={(
+                      <DropdownToggle iconComponent={null} onToggle={this.handleAddToggle}>
+                        <ToolbarAddButton key="add" onToggle={this.handleAddToggle} onClick={this.nothing}/>
+                      </DropdownToggle>
+                    )}
+                    dropdownItems={[
+                      <DropdownItem key="job">
+                        {i18n._(t`Job Template`)}
+                      </DropdownItem>,
+                      <DropdownItem key="workflow">
+                        {i18n._(t`Workflow Template`)}
+                      </DropdownItem>
+                      ]}
+                    >
+                </Dropdown>
                 ]}
               />
             )}
