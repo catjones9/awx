@@ -110,15 +110,11 @@ class TemplatesList extends Component {
   }
 
   onJobClick () {
-    JobTemplatesAPI.launch();
-    // window.location.replace('/#/home');
     console.log('add job template')
   }
 
   onWorkflowClick () {
-    WorkflowJobTemplatesAPI.launch();
-    window.location.replace('/#/home');
-    this.setState({href: '/#/home'});
+   console.log('add workflow template')
   }
 
   async handleTemplateDelete () {
@@ -213,9 +209,7 @@ class TemplatesList extends Component {
                     isOpen={isAddOpen}
                     position={DropdownPosition.right}
                     toggle={(
-                      <DropdownToggle onToggle={this.handleAddToggle} iconComponent={null}>
-                        <ToolbarAddButton onClick={this.nothing}/> 
-                      </DropdownToggle>
+                        <ToolbarAddButton onClick={this.handleAddToggle}/> 
                     )}
                     dropdownItems={[
                       <DropdownItem 
