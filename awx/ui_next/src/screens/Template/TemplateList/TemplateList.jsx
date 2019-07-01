@@ -8,11 +8,9 @@ import {
   PageSectionVariants,
   Dropdown,
   DropdownItem,
-  DropdownToggle,
   DropdownPosition,
 } from '@patternfly/react-core';
 
-import { QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   JobTemplatesAPI,
   UnifiedJobTemplatesAPI,
@@ -51,15 +49,14 @@ class TemplatesList extends Component {
       itemCount: 0,
       isOpen: false,
       isAddOpen: false,
+      actions: null
     };
     this.loadTemplates = this.loadTemplates.bind(this);
     this.handleSelectAll = this.handleSelectAll.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
     this.handleTemplateDelete = this.handleTemplateDelete.bind(this);
     this.handleDeleteErrorClose = this.handleDeleteErrorClose.bind(this);
-    this.handleAddSelect = this.handleAddSelect.bind(this);
     this.handleAddToggle = this.handleAddToggle.bind(this);
-    this.nothing = this.nothing.bind(this);
     this.onJobClick = this.onJobClick.bind(this);
     this.onWorkflowClick = this.onWorkflowClick.bind(this);
   }
@@ -77,21 +74,6 @@ class TemplatesList extends Component {
 
   handleDeleteErrorClose() {
     this.setState({ deletionError: null });
-  }
-
-<<<<<<< HEAD
-
-  handleAddToggle () {
-=======
-  nothing () {
-    console.log('clicked')
-  }
-
-  handleAddSelect () {
->>>>>>> WIP
-    const { isAddOpen } = this.state;
-
-    this.setState({ isAddOpen: !isAddOpen });
   }
 
   handleAddToggle () {
@@ -114,9 +96,6 @@ class TemplatesList extends Component {
     }
   }
 
-<<<<<<< HEAD
-  async handleTemplateDelete() {
-=======
   onJobClick () {
     console.log('add job template')
   }
@@ -126,7 +105,6 @@ class TemplatesList extends Component {
   }
 
   async handleTemplateDelete () {
->>>>>>> WIP
     const { selected } = this.state;
 
     this.setState({ hasContentLoading: true });
@@ -172,6 +150,7 @@ class TemplatesList extends Component {
 
   render() {
     const {
+      actions,
       contentError,
       hasContentLoading,
       deletionError,
@@ -185,6 +164,7 @@ class TemplatesList extends Component {
       i18n,
     } = this.props;
 
+    const canAdd = actions && Object.prototype.hasOwnProperty.call(actions, 'POST');
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
@@ -238,16 +218,14 @@ class TemplatesList extends Component {
                       <DropdownItem 
                         key="job" 
                         component="button"
-                        // onClick={onJobClick}>
-                        onClick={this.onJobClick}>
-                        {/* to={this.onJobClick}> */}
+                        // linkTo={`${match.url}/add`}
+                        onClick={this.onJobClick}
+                        >
                           {i18n._(t`Job Template`)}
                       </DropdownItem>,
                       <DropdownItem 
                         key="workflow"
                         component="button"
-                        // onClick={onWorkflowClick}>
-                        // to={`/templates/${match.params.templateType}/${match.params.id}/add`}
                         onClick={this.onWorkflowClick}
                         >
                         {i18n._(t`Workflow Template`)}
@@ -268,6 +246,33 @@ class TemplatesList extends Component {
                 isSelected={selected.some(row => row.id === template.id)}
               />
             )}
+            emptyStateControls={
+              <Dropdown
+                    isPlain
+                    key="add"
+                    isOpen={isAddOpen}
+                    position={DropdownPosition.right}
+                    toggle={(
+                        <ToolbarAddButton onClick={this.handleAddToggle}/> 
+                    )}
+                    dropdownItems={[
+                      <DropdownItem 
+                        key="job" 
+                        component="button"
+                        onClick={this.onJobClick}>
+                          {i18n._(t`Job Template`)}
+                      </DropdownItem>,
+                      <DropdownItem 
+                        key="workflow"
+                        component="button"
+                        onClick={this.onWorkflowClick}
+                        >
+                        {i18n._(t`Workflow Template`)}
+                      </DropdownItem>
+                      ]}
+                    >
+                </Dropdown>
+              }
           />
         </Card>
         <AlertModal
