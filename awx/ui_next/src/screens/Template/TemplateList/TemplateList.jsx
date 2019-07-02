@@ -8,11 +8,9 @@ import {
   PageSectionVariants,
   Dropdown,
   DropdownItem,
-  DropdownToggle,
   DropdownPosition,
 } from '@patternfly/react-core';
 
-import { QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   JobTemplatesAPI,
   UnifiedJobTemplatesAPI,
@@ -49,9 +47,7 @@ class TemplatesList extends Component {
       selected: [],
       templates: [],
       itemCount: 0,
-      isOpen: false,
       isAddOpen: false,
-      actions: null
     };
     this.loadTemplates = this.loadTemplates.bind(this);
     this.handleSelectAll = this.handleSelectAll.bind(this);
@@ -59,8 +55,8 @@ class TemplatesList extends Component {
     this.handleTemplateDelete = this.handleTemplateDelete.bind(this);
     this.handleDeleteErrorClose = this.handleDeleteErrorClose.bind(this);
     this.handleAddToggle = this.handleAddToggle.bind(this);
-    this.onJobClick = this.onJobClick.bind(this);
-    this.onWorkflowClick = this.onWorkflowClick.bind(this);
+    this.onJobSelect = this.onJobSelect.bind(this);
+    this.onWorkflowSelect = this.onWorkflowSelect.bind(this);
   }
 
   componentDidMount() {
@@ -78,11 +74,6 @@ class TemplatesList extends Component {
     this.setState({ deletionError: null });
   }
 
-  handleAddToggle () {
-    const { isAddOpen } = this.state;
-    this.setState({ isAddOpen: !isAddOpen });
-  }
-
   handleSelectAll (isSelected) {
     const { templates } = this.state;
     const selected = isSelected ? [...templates] : [];
@@ -98,12 +89,17 @@ class TemplatesList extends Component {
     }
   }
 
-  onJobClick () {
-    console.log('add job template')
+  handleAddToggle () {
+    const { isAddOpen } = this.state;
+    this.setState({ isAddOpen: !isAddOpen });
   }
 
-  onWorkflowClick () {
-   console.log('add workflow template')
+  onJobSelect () {
+    this.setState({isAddOpen: false});
+  }
+
+  onWorkflowSelect () {
+    this.setState({isAddOpen: false});
   }
 
   async handleTemplateDelete () {
@@ -152,7 +148,6 @@ class TemplatesList extends Component {
 
   render() {
     const {
-      actions,
       contentError,
       hasContentLoading,
       deletionError,
@@ -166,7 +161,7 @@ class TemplatesList extends Component {
       i18n,
     } = this.props;
 
-    const canAdd = actions && Object.prototype.hasOwnProperty.call(actions, 'POST');
+    const canAdd = true;
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
@@ -207,34 +202,33 @@ class TemplatesList extends Component {
                     onDelete={this.handleTemplateDelete}
                     itemsToDelete={selected}
                     itemName={i18n._(t`Template`)}
-                  />,
+                  />, canAdd ?
                   <Dropdown
-                    isPlain
                     key="add"
+                    isPlain
                     isOpen={isAddOpen}
                     position={DropdownPosition.right}
+                    onSelect={this.handleAddSelect}
                     toggle={(
-                        <ToolbarAddButton onClick={this.handleAddToggle}/> 
+                        <ToolbarAddButton onClick={this.handleAddToggle}/>
                     )}
                     dropdownItems={[
-                      <DropdownItem 
-                        key="job" 
+                      <DropdownItem
+                        key="job"
                         component="button"
-                        // linkTo={`${match.url}/add`}
-                        onClick={this.onJobClick}
+                        onClick={this.onJobSelect}
                         >
                           {i18n._(t`Job Template`)}
                       </DropdownItem>,
-                      <DropdownItem 
+                      <DropdownItem
                         key="workflow"
                         component="button"
-                        onClick={this.onWorkflowClick}
+                        onClick={this.onWorkflowSelect}
                         >
                         {i18n._(t`Workflow Template`)}
                       </DropdownItem>
-                      ]}
-                    >
-                </Dropdown>
+                    ]}
+                  /> : null
                 ]}
               />
             )}
@@ -248,32 +242,33 @@ class TemplatesList extends Component {
                 isSelected={selected.some(row => row.id === template.id)}
               />
             )}
-            emptyStateControls={
+            emptyStateControls={ canAdd ?
               <Dropdown
-                    isPlain
                     key="add"
+                    isPlain
                     isOpen={isAddOpen}
                     position={DropdownPosition.right}
+                    onSelect={this.handleAddSelect}
                     toggle={(
-                        <ToolbarAddButton onClick={this.handleAddToggle}/> 
+                        <ToolbarAddButton onClick={this.handleAddToggle}/>
                     )}
                     dropdownItems={[
-                      <DropdownItem 
-                        key="job" 
+                      <DropdownItem
+                        key="job"
                         component="button"
-                        onClick={this.onJobClick}>
+                        onClick={this.onJobSelect}
+                        >
                           {i18n._(t`Job Template`)}
                       </DropdownItem>,
-                      <DropdownItem 
+                      <DropdownItem
                         key="workflow"
                         component="button"
-                        onClick={this.onWorkflowClick}
+                        onClick={this.onWorkflowSelect}
                         >
                         {i18n._(t`Workflow Template`)}
                       </DropdownItem>
-                      ]}
-                    >
-                </Dropdown>
+                    ]}
+                  /> : null
               }
           />
         </Card>
