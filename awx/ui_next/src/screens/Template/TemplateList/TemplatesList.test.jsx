@@ -220,4 +220,19 @@ describe('<TemplatesList />', () => {
       el => el.props().isOpen === true && el.props().title === 'Error!'
     );
   });
+
+  test('expected add dropdown content is rendered on initialization', async () => {
+    const wrapper = mountWithContexts(<TemplatesList />);
+    wrapper.find('ToolbarAddButton').setState({
+      isOpen: true,
+    })
+
+    // await waitForElement(
+    //   wrapper,
+    //   'TemplatesList',
+    //   el => el.props().isOpen === true
+    // );
+    expect(wrapper.find('Dropdown ToolbarAddButton')).toHaveLength(2)
+  });
 });
+
