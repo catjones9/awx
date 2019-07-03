@@ -110,16 +110,20 @@ describe('<TemplatesList />', () => {
 
   test('handleSelect is called when a template list item is selected', async done => {
     const handleSelect = jest.spyOn(_TemplatesList.prototype, 'handleSelect');
+    const loadTemplates = jest.spyOn(_TemplatesList.prototype, 'loadTemplates');
+
     const wrapper = mountWithContexts(<TemplatesList />);
     await waitForElement(
       wrapper,
       'TemplatesList',
       el => el.state('hasContentLoading') === false
     );
-    wrapper
-      .find('DataListCheck#select-jobTemplate-1')
-      .props()
-      .onChange();
+
+    expect(loadTemplates).toHaveBeenCalled();
+
+    const datalist = wrapper.find('DataListCheck#select-jobTemplate-1');
+    datalist.props().onChange();
+
     expect(handleSelect).toBeCalled();
     await waitForElement(
       wrapper,
