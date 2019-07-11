@@ -3,7 +3,8 @@ import { withRouter, Link } from 'react-router-dom';
 import { withI18n } from '@lingui/react';
 
 import { t } from '@lingui/macro';
-import { Card,
+import {
+  Card,
   PageSection,
   PageSectionVariants,
   Dropdown,
@@ -13,8 +14,7 @@ import { Card,
 
 import {
   JobTemplatesAPI,
-  UnifiedJobTemplatesAPI,
-  WorkflowJobTemplatesAPI,
+  WorkflowJobTemplatesAPI
 } from '@api';
 import AlertModal from '@components/AlertModal';
 import DataListToolbar from '@components/DataListToolbar';
@@ -88,7 +88,7 @@ class TemplatesList extends Component {
     }
   }
 
-  handleAddToggle () {
+  handleAddToggle() {
     const { isAddOpen } = this.state;
     this.setState({ isAddOpen: !isAddOpen });
   }
@@ -119,14 +119,35 @@ class TemplatesList extends Component {
 
   async loadTemplates() {
     const { location } = this.props;
+    const { actions : cachedActions} = this.state;
     const params = parseNamespacedQueryString(QS_CONFIG, location.search);
+
+    let optionsPromise;
+    if (cachedActions) {
+      optionsPromise = Promise.resolve({ data: { actions: cachedActions } });
+    } else {
+      optionsPromise = JobTemplatesAPI.readOptions();
+    }
+
+    const promises = Promise.all([
+      JobTemplatesAPI.read(params),
+      WorkflowJobTemplatesAPI.read(params),
+      optionsPromise,
+    ]);
 
     this.setState({ contentError: null, hasContentLoading: true });
     try {
-      const {
-        data: { count, results },
-      } = await UnifiedJobTemplatesAPI.read(params);
+      const [
+        {
+          data: { count, results },
+        },
+        {
+          data: { actions },
+        },
+      ] = await promises;
+
       this.setState({
+        actions,
         itemCount: count,
         templates: results,
         selected: [],
@@ -146,14 +167,13 @@ class TemplatesList extends Component {
       templates,
       itemCount,
       selected,
-      isAddOpen
+      isAddOpen,
+      actions,
     } = this.state;
-    const {
-      match,
-      i18n,
-    } = this.props;
+    const { match, i18n } = this.props;
 
-    const canAdd = true;
+    const canAdd =
+      actions && Object.prototype.hasOwnProperty.call(actions, 'POST');
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
@@ -194,33 +214,35 @@ class TemplatesList extends Component {
                     onDelete={this.handleTemplateDelete}
                     itemsToDelete={selected}
                     itemName={i18n._(t`Template`)}
-                  />, canAdd ?
-                  <Dropdown
-                    key="add"
-                    isPlain
-                    isOpen={isAddOpen}
-                    position={DropdownPosition.right}
-                    onSelect={this.handleAddSelect}
-                    toggle={
-                        <ToolbarAddButton onClick={this.handleAddToggle}/>
-                    }
-                    dropdownItems={[
-                      <DropdownItem
-                        key="job"
-                        component={Link}
-                        to={`${match.url}/job_template/add`}
+                  />,
+                  canAdd ? (
+                    <Dropdown
+                      key="add"
+                      isPlain
+                      isOpen={isAddOpen}
+                      position={DropdownPosition.right}
+                      onSelect={this.handleAddSelect}
+                      toggle={
+                        <ToolbarAddButton onClick={this.handleAddToggle} />
+                      }
+                      dropdownItems={[
+                        <DropdownItem
+                          key="job"
+                          component={Link}
+                          to={`${match.url}/job_template/add`}
                         >
                           {i18n._(t`Job Template`)}
-                      </DropdownItem>,
-                      <DropdownItem
-                        key="workflow"
-                        component={Link}
-                        to={`${match.url}/add`}
+                        </DropdownItem>,
+                        <DropdownItem
+                          key="workflow"
+                          component={Link}
+                          to={`${match.url}/add`}
                         >
-                        {i18n._(t`Workflow Template`)}
-                      </DropdownItem>
-                    ]}
-                  /> : null
+                          {i18n._(t`Workflow Template`)}
+                        </DropdownItem>,
+                      ]}
+                    />
+                  ) : null,
                 ]}
               />
             )}
@@ -234,33 +256,33 @@ class TemplatesList extends Component {
                 isSelected={selected.some(row => row.id === template.id)}
               />
             )}
-            emptyStateControls={ canAdd ?
-              <Dropdown
-                key="add"
-                isPlain
-                isOpen={isAddOpen}
-                position={DropdownPosition.right}
-                onSelect={this.handleAddSelect}
-                toggle={(
-                    <ToolbarAddButton onClick={this.handleAddToggle}/>
-                )}
-                dropdownItems={[
-                  <DropdownItem
-                    key="job"
-                    component={Link}
-                    to={`${match.url}/job_template/add/`}
+            emptyStateControls={
+              canAdd ? (
+                <Dropdown
+                  key="add"
+                  isPlain
+                  isOpen={isAddOpen}
+                  position={DropdownPosition.right}
+                  onSelect={this.handleAddSelect}
+                  toggle={<ToolbarAddButton onClick={this.handleAddToggle} />}
+                  dropdownItems={[
+                    <DropdownItem
+                      key="job"
+                      component={Link}
+                      to={`${match.url}/job_template/add/`}
                     >
                       {i18n._(t`Job Template`)}
-                  </DropdownItem>,
-                  <DropdownItem
-                    key="workflow"
-                    component={Link}
-                    to={`${match.url}_workflow/add/`}
+                    </DropdownItem>,
+                    <DropdownItem
+                      key="workflow"
+                      component={Link}
+                      to={`${match.url}_workflow/add/`}
                     >
-                    {i18n._(t`Workflow Template`)}
-                  </DropdownItem>
-                ]}
-              /> : null
+                      {i18n._(t`Workflow Template`)}
+                    </DropdownItem>,
+                  ]}
+                />
+              ) : null
             }
           />
         </Card>
