@@ -131,7 +131,6 @@ class TemplatesList extends Component {
 
     const promises = Promise.all([
       JobTemplatesAPI.read(params),
-      WorkflowJobTemplatesAPI.read(params),
       optionsPromise,
     ]);
 
@@ -174,6 +173,7 @@ class TemplatesList extends Component {
 
     const canAdd =
       actions && Object.prototype.hasOwnProperty.call(actions, 'POST');
+    console.log("canAdd: ", canAdd);
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
