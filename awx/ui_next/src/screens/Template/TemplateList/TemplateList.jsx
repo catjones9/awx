@@ -14,10 +14,10 @@ import {
 
 import {
   JobTemplatesAPI,
-  WorkflowJobTemplatesAPI
+  WorkflowJobTemplatesAPI,
 } from '@api';
 import AlertModal from '@components/AlertModal';
-import DataListToolbar from '@components/DataListToolbar';
+import DatalistToolbar from '@components/DataListToolbar';
 import ErrorDetail from '@components/ErrorDetail';
 import PaginatedDataList, {
   ToolbarDeleteButton,
@@ -119,7 +119,7 @@ class TemplatesList extends Component {
 
   async loadTemplates() {
     const { location } = this.props;
-    const { actions : cachedActions} = this.state;
+    const { actions: cachedActions } = this.state;
     const params = parseNamespacedQueryString(QS_CONFIG, location.search);
 
     let optionsPromise;
@@ -138,14 +138,10 @@ class TemplatesList extends Component {
     try {
       const [
         {
-          data: { count, results },
-        },
-        {
-          data: { actions },
+          data: { count, results, actions },
         },
       ] = await promises;
-
-      this.setState({
+    this.setState({
         actions,
         itemCount: count,
         templates: results,
@@ -153,6 +149,7 @@ class TemplatesList extends Component {
       });
     } catch (err) {
       this.setState({ contentError: err });
+
     } finally {
       this.setState({ hasContentLoading: false });
     }
@@ -201,7 +198,7 @@ class TemplatesList extends Component {
               },
             ]}
             renderToolbar={props => (
-              <DataListToolbar
+              <DatalistToolbar
                 {...props}
                 showSelectAll
                 showExpandCollapse
