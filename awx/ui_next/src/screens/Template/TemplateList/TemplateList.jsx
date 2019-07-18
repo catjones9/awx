@@ -12,10 +12,7 @@ import {
   DropdownPosition,
 } from '@patternfly/react-core';
 
-import {
-  JobTemplatesAPI,
-  WorkflowJobTemplatesAPI,
-} from '@api';
+import { JobTemplatesAPI, WorkflowJobTemplatesAPI } from '@api';
 import AlertModal from '@components/AlertModal';
 import DatalistToolbar from '@components/DataListToolbar';
 import ErrorDetail from '@components/ErrorDetail';
@@ -141,7 +138,7 @@ class TemplatesList extends Component {
           data: { count, results, actions },
         },
       ] = await promises;
-    this.setState({
+      this.setState({
         actions,
         itemCount: count,
         templates: results,
@@ -149,7 +146,6 @@ class TemplatesList extends Component {
       });
     } catch (err) {
       this.setState({ contentError: err });
-
     } finally {
       this.setState({ hasContentLoading: false });
     }
