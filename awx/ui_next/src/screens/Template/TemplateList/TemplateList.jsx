@@ -170,6 +170,16 @@ class TemplatesList extends Component {
 
     const canAdd =
       actions && Object.prototype.hasOwnProperty.call(actions, 'POST');
+      isAddOpen
+    } = this.state;
+
+    const {
+      match,
+      i18n,
+    } = this.props;
+
+    const canAdd = true;
+
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
