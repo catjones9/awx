@@ -166,6 +166,7 @@ class TemplatesList extends Component {
 
     const canAdd =
       actions && Object.prototype.hasOwnProperty.call(actions, 'POST');
+<<<<<<< Updated upstream
       isAddOpen
     } = this.state;
 
@@ -176,6 +177,8 @@ class TemplatesList extends Component {
 
     const canAdd = true;
 
+=======
+>>>>>>> Stashed changes
     const isAllSelected = selected.length === templates.length;
     const { medium } = PageSectionVariants;
     return (
